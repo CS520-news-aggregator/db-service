@@ -5,11 +5,21 @@ from routers.user import user_router
 from routers.annotator import annotator_router
 from routers.aggregator import aggregator_router
 from utils import get_mongo_client
+from fastapi.middleware.cors import CORSMiddleware
 
 config = dotenv_values(".env")
+origins = ["*"]
 
 
 app = FastAPI(title="News Annotator DB-Service", version="1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user_router)
 app.include_router(annotator_router)
@@ -19,6 +29,7 @@ app.include_router(aggregator_router)
 @app.get("/")
 async def root():
     return {"Hello": "World"}
+
 
 @app.get("/clean_db")
 async def clean_db():

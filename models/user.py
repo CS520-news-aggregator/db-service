@@ -20,8 +20,8 @@ class Token(BaseModel):
 class RegisterUser(BaseModel):
     email_address: str
     password: str
-    first_name: str
-    last_name: str
+    # first_name: str
+    # last_name: str
 
     class Config:
         populate_by_name = True
