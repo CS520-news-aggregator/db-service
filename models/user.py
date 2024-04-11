@@ -31,7 +31,10 @@ class RegisterUser(BaseModel):
             r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
         )
         if not re_for_pwd.match(pwd):
-            raise ValueError("invalid password")
+            raise ValueError(
+                "Invalid password - must contain at least 1 letter and 1 number and"
+                "be at least 8 characters long"
+            )
         return pwd
 
     class Config:
