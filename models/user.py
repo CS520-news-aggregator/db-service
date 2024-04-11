@@ -1,5 +1,6 @@
+import re
 import uuid
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class Token(BaseModel):
@@ -22,6 +23,16 @@ class RegisterUser(BaseModel):
     password: str
     # first_name: str
     # last_name: str
+
+    @field_validator("password")
+    @classmethod
+    def regex_match(cls, pwd: str) -> str:
+        re_for_pwd: re.Pattern[str] = re.compile(
+            r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+        )
+        if not re_for_pwd.match(pwd):
+            raise ValueError("invalid password")
+        return pwd
 
     class Config:
         populate_by_name = True
