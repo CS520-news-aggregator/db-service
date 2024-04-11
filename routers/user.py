@@ -68,6 +68,8 @@ def create_token(user, user_id: str):
 
 @user_router.post("/add-preferences")
 def add_preferences(user = Depends(auth_manager), prefs: Preferences = Body(...)):
+    if user_client["preferences"].find_one({"user_id": user["id"]}):
+        raise HTTPException(status_code=401, detail="User-preferences already exists")
     user_prefs = jsonable_encoder(prefs)
     user_prefs['user_id'] = user.id
     res_prefs = user_client["preferences"].insert_one(user_prefs)
