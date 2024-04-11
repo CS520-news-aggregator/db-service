@@ -23,33 +23,44 @@ export TOKEN=$(curl -X 'POST' \
 curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
 'http://localhost:8000/user/view' | jq .
 
-export POST_ID=$(curl -X 'POST' \
-    'http://localhost:8000/aggregator/add-aggregation' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -d '{
-          "title": "Sample Post",
-          "link": "https://www.google.com",
-          "media": "https://www.google.com",
-          "author": "John Doe",
-          "date": "2021-09-01"
-}' | jq -r .post_id)
-
-curl -X 'GET' \
-"http://localhost:8000/aggregator/get-aggregation?post_id=$POST_ID" \
--H 'accept: application/json' \
--H 'Content-Type: application/json' | jq .
-
-curl -X 'POST' \
-'http://localhost:8000/annotator/add-annotation' \
+curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+'http://127.0.0.1:8000/user/add-preferences' \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-          "post_id": "'$POST_ID'",
-          "list_topics": ["topic1", "topic2"]
-}'
+          "preferences": ["topic1", "topic2"]
+}' | jq .
 
-curl -X 'GET' \
-"http://localhost:8000/annotator/get-annotation?post_id=$POST_ID" \
--H 'accept: application/json' \
--H 'Content-Type: application/json' | jq .
+curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
+'http://localhost:8000/user/get-preferences' | jq .
+
+# export POST_ID=$(curl -X 'POST' \
+#     'http://localhost:8000/aggregator/add-aggregation' \
+#     -H 'accept: application/json' \
+#     -H 'Content-Type: application/json' \
+#     -d '{
+#           "title": "Sample Post",
+#           "link": "https://www.google.com",
+#           "media": "https://www.google.com",
+#           "author": "John Doe",
+#           "date": "2021-09-01"
+# }' | jq -r .post_id)
+
+# curl -X 'GET' \
+# "http://localhost:8000/aggregator/get-aggregation?post_id=$POST_ID" \
+# -H 'accept: application/json' \
+# -H 'Content-Type: application/json' | jq .
+
+# curl -X 'POST' \
+# 'http://localhost:8000/annotator/add-annotation' \
+# -H 'accept: application/json' \
+# -H 'Content-Type: application/json' \
+# -d '{
+#           "post_id": "'$POST_ID'",
+#           "list_topics": ["topic1", "topic2"]
+# }'
+
+# curl -X 'GET' \
+# "http://localhost:8000/annotator/get-annotation?post_id=$POST_ID" \
+# -H 'accept: application/json' \
+# -H 'Content-Type: application/json' | jq .

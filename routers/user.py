@@ -66,16 +66,25 @@ def create_token(user, user_id: str):
     user_client["tokens"].insert_one(jsonable_encoder(token))
     return access_token
 
+
 @user_router.post("/add-preferences")
 def add_preferences(user = Depends(auth_manager), prefs: Preferences = Body(...)):
     if user_client["preferences"].find_one({"user_id": user["id"]}):
         raise HTTPException(status_code=401, detail="User-preferences already exists")
+    
     user_prefs = jsonable_encoder(prefs)
-    user_prefs['user_id'] = user.id
+    user_prefs["user_id"] = user["id"]
     res_prefs = user_client["preferences"].insert_one(user_prefs)
-    return {"message": "Preferences have been added", "prefs_id": str(res_prefs.inserted_id)}
+    return {
+        "message": "Preferences have been added",
+        "prefs_id": str(res_prefs.inserted_id),
+    }
+
 
 @user_router.get("/get-preferences")
 def get_preferences(user=Depends(auth_manager)):
-    prefs = user_client["preferences"].find_one({"user_id": user.id})
-    return {"message": "This the list of user preferences", "preferences": jsonable_encoder(prefs)}
+    prefs = user_client["preferences"].find_one({"user_id": user["id"]})
+    return {
+        "message": "This the list of user preferences",
+        "preferences": jsonable_encoder(prefs["preferences"]),
+    }
