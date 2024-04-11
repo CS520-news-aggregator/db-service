@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from models.user import RegisterUser, LoginUser, Token
+from models.user import RegisterUser, LoginUser, Token, Preferences
 from fastapi_login import LoginManager
 from passlib.context import CryptContext
 from fastapi.encoders import jsonable_encoder
@@ -65,3 +65,15 @@ def create_token(user, user_id: str):
     token = Token(user_id=user_id, token=access_token)
     user_client["tokens"].insert_one(jsonable_encoder(token))
     return access_token
+
+@user_router.post("/add-preferences")
+def add_preferences(user = Depends(auth_manager), prefs: Preferences = Body(...)):
+    user_prefs = jsonable_encoder(prefs)
+    user_prefs['user_id'] = user.id
+    res_prefs = user_client["preferences"].insert_one(user_prefs)
+    return {"message": "Preferences have been added", "prefs_id": str(res_prefs.inserted_id)}
+
+@user_router.get("/get-preferences")
+def get_preferences(user=Depends(auth_manager)):
+    prefs = user_client["preferences"].find_one({"user_id": user.id})
+    return {"message": "This the list of user preferences", "preferences": jsonable_encoder(prefs)}

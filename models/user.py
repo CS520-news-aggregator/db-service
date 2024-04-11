@@ -61,3 +61,16 @@ class LoginUser(BaseModel):
                 "password": "password",
             }
         }
+
+
+class Preferences(BaseModel):
+    preferences: list[str]
+
+    class Config:
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "preferences": ["sports", "food", "mastering the art of getting bored"]
+            }
+        }
+
