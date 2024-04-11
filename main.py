@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from dotenv import dotenv_values
 import uvicorn
 from routers.user import user_router
+from routers.annotator import annotator_router
 
 config = dotenv_values(".env")
 
@@ -9,6 +10,7 @@ config = dotenv_values(".env")
 app = FastAPI(title="News Annotator DB-Service", version="1.0")
 
 app.include_router(user_router)
+app.include_router(annotator_router)
 
 
 @app.get("/")
