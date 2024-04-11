@@ -2,7 +2,6 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from models.user import RegisterUser, LoginUser, Token
 from fastapi_login import LoginManager
 from passlib.context import CryptContext
-from fastapi import Depends, APIRouter
 from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.encoders import jsonable_encoder
 from datetime import timedelta

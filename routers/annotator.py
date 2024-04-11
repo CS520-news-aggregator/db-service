@@ -1,17 +1,31 @@
-from fastapi import APIRouter, Body, Depends
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter, Body
+from fastapi.encoders import jsonable_encoder
 from utils import get_mongo_client
-from routers.user import auth_manager
+from models.annotator import Annotation
 
 annotator_router = APIRouter(prefix="/annotator")
 annotator_client = get_mongo_client()["annotator"]
 
 
 @annotator_router.post("/add-annotation")
-def annotate_text(user=Depends(auth_manager)):
-    return {"message": "Added text annotation"}
+def put_annotations(annotation: Annotation = Body(...)):
+    annotation_data = jsonable_encoder(annotation)
+    res_annotation = annotator_client["topics"].insert_one(annotation_data)
+    return {
+        "message": "Added text annotation",
+        "annotation_id": str(res_annotation.inserted_id),
+    }
 
 
 @annotator_router.get("/get-annotation")
-def get_annotations(user=Depends(auth_manager)):
-    return {"message": "Retrieved annotations"}
+def get_annotations(post_id: str):
+    annotations = get_topics(post_id)
+    return {
+        "message": "Retrieved annotations",
+        "annotations": jsonable_encoder(annotations),
+    }
+
+
+def get_topics(post_id: str):
+    annotations = annotator_client["topics"].find_one({"post_id": post_id})
+    return annotations
