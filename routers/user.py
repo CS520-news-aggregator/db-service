@@ -2,7 +2,6 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from models.user import RegisterUser, LoginUser, Token
 from fastapi_login import LoginManager
 from passlib.context import CryptContext
-from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.encoders import jsonable_encoder
 from datetime import timedelta
 from utils import get_mongo_client
@@ -45,7 +44,7 @@ def login(_: Request, data: LoginUser = Body(...)):
         raise HTTPException(status_code=401, detail="User not found")
 
     if not pwd_context.verify(data.password, user["hashed_password"]):
-        raise InvalidCredentialsException("Invalid credentials")
+        raise HTTPException(status_code=401, detail="Incorrect password")
 
     return {"message": "Logged in", "token": create_token(user, str(user["_id"]))}
 
