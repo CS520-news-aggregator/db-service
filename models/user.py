@@ -1,5 +1,5 @@
 import uuid
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
 class Token(BaseModel):
@@ -18,7 +18,7 @@ class Token(BaseModel):
 
 
 class RegisterUser(BaseModel):
-    email_address: str
+    email_address: EmailStr
     password: str
     # first_name: str
     # last_name: str
@@ -29,14 +29,14 @@ class RegisterUser(BaseModel):
             "example": {
                 "email_address": "john_doe@gmail.com",
                 "password": "password",
-                "first_name": "John",
-                "last_name": "Doe",
+                # "first_name": "John",
+                # "last_name": "Doe",
             }
         }
 
 
 class LoginUser(BaseModel):
-    email_address: str
+    email_address: EmailStr
     password: str
 
     class Config:
