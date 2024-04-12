@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 
 RUN apt update -y 
-RUN apt-get install libpq-dev python3-dev -y
+RUN apt-get install libpq-dev python3-dev wget -y
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
