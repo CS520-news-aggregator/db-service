@@ -64,3 +64,6 @@ curl -X 'GET' \
 "http://localhost:8000/annotator/get-annotation?post_id=$POST_ID" \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' | jq .
+
+curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
+'http://localhost:8000/recommender/get-recommendations' | jq .

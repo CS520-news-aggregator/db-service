@@ -10,6 +10,10 @@ class Post(BaseModel):
     author: str
     date: str
 
+    upvotes: int = 0
+    downvotes: int = 0
+    comments: list = []
+
     class Config:
         populate_by_name = True
         json_schema_extra = {

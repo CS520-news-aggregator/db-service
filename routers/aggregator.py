@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends, HTTPException
 from utils import get_mongo_client
 from models.aggregator import Post
 from fastapi.encoders import jsonable_encoder
+from routers.user import auth_manager
 
 
 aggregator_router = APIRouter(prefix="/aggregator")
@@ -27,6 +28,17 @@ def get_all_aggregations(limit: int):
         "message": "Retrieved aggregations",
         "list_posts": list(aggregator_client["posts"].find().limit(limit)),
     }
+
+
+@aggregator_client.post("/upvote")
+def upvote_post(post_id: str, user=Depends(auth_manager)):
+    if get_post(post_id) is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    aggregator_client["posts"].update_one(
+        {"_id": post_id}, {"$inc": {"upvotes": 1}}, upsert=False
+    )
+    return {"message": "Post upvoted"}
 
 
 def get_post(post_id: str):
