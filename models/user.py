@@ -18,11 +18,13 @@ class Token(BaseModel):
         }
 
 
+# Main class for user
 class RegisterUser(BaseModel):
+    id: str = Field(default_factory=uuid.uuid4, alias="_id")
     email_address: EmailStr
     password: str
-    # first_name: str
-    # last_name: str
+    list_of_upvotes: list[str] = []
+    list_of_downvotes: list[str] = []
 
     @field_validator("password")
     @classmethod
@@ -73,4 +75,3 @@ class Preferences(BaseModel):
                 "preferences": ["sports", "food", "mastering the art of getting bored"]
             }
         }
-

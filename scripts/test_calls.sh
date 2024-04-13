@@ -67,3 +67,20 @@ curl -X 'GET' \
 
 curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
 'http://localhost:8000/recommender/get-recommendations' | jq .
+
+curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/upvote?post_id=$POST_ID" | jq .
+
+curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/comment" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+          "post_id": "'$POST_ID'",
+          "comment": "This is a comment"
+}' | jq .
+
+curl -X 'GET' \
+"http://localhost:8000/aggregator/get-comments?post_id=$POST_ID" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' | jq .

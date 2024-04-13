@@ -12,7 +12,6 @@ class Post(BaseModel):
 
     upvotes: int = 0
     downvotes: int = 0
-    comments: list = []
 
     class Config:
         populate_by_name = True
@@ -23,5 +22,20 @@ class Post(BaseModel):
                 "media": "sample",
                 "author": "sample",
                 "date": "sample",
+            }
+        }
+
+
+class Comment(BaseModel):
+    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    comment: str
+    post_id: str
+
+    class Config:
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "comment": "sample",
+                "post_id": "sample",
             }
         }
