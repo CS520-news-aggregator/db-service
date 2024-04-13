@@ -50,8 +50,13 @@ def login(_: Request, data: LoginUser = Body(...)):
 
 
 @user_router.get("/view")
-def view_user(user=Depends(auth_manager)):
+async def view_user(user=Depends(auth_manager)):
     return {"message": "User is logged in", "user": user}
+
+
+@user_router.get("/get-all-users")
+async def get_all_users():
+    return [str(user["_id"]) for user in user_client["users"].find()]
 
 
 def create_token(user, user_id: str):
@@ -68,10 +73,10 @@ def create_token(user, user_id: str):
 
 
 @user_router.post("/add-preferences")
-def add_preferences(user = Depends(auth_manager), prefs: Preferences = Body(...)):
+def add_preferences(user=Depends(auth_manager), prefs: Preferences = Body(...)):
     if user_client["preferences"].find_one({"user_id": user["id"]}):
         raise HTTPException(status_code=401, detail="User-preferences already exists")
-    
+
     user_prefs = jsonable_encoder(prefs)
     user_prefs["user_id"] = user["id"]
     res_prefs = user_client["preferences"].insert_one(user_prefs)

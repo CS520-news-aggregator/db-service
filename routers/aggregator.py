@@ -21,6 +21,14 @@ def get_aggregations(post_id: str):
     return {"message": "Retrieved aggregations", "post": jsonable_encoder(post)}
 
 
+@aggregator_router.get("/get-all-aggregations")
+def get_all_aggregations(limit: int):
+    return {
+        "message": "Retrieved aggregations",
+        "list_posts": list(aggregator_client["posts"].find().limit(limit)),
+    }
+
+
 def get_post(post_id: str):
     post = aggregator_client["posts"].find_one({"_id": post_id})
     return post
