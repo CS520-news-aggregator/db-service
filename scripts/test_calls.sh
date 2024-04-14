@@ -84,3 +84,21 @@ curl -X 'GET' \
 "http://localhost:8000/aggregator/get-comments?post_id=$POST_ID" \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/upvote?post_id=$POST_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/upvote?post_id=$POST_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/remove-upvote?post_id=$POST_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/downvote?post_id=$POST_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/remove-downvote?post_id=$POST_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/remove-downvote?post_id=$POST_ID" | jq .

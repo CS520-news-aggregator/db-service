@@ -30,7 +30,7 @@ async def get_all_aggregations(limit: int):
     }
 
 
-@aggregator_router.post("/upvote")
+@aggregator_router.put("/upvote")
 async def upvote_post(post_id: str, user=Depends(auth_manager)):
     if get_post(post_id) is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -50,7 +50,22 @@ async def upvote_post(post_id: str, user=Depends(auth_manager)):
     return {"message": "Post upvoted"}
 
 
-@aggregator_router.post("/downvote")
+@aggregator_router.put("/remove-upvote")
+async def remove_upvote_post(post_id: str, user=Depends(auth_manager)):
+    if get_post(post_id) is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # Checks if user has not upvoted the post
+    if post_id not in user["list_of_upvotes"]:
+        raise HTTPException(status_code=400, detail="Post not upvoted")
+
+    change_attribute_count(post_id, "upvotes", False)
+    remove_from_attribute_list(user, "list_of_upvotes", post_id)
+
+    return {"message": "Post upvote removed"}
+
+
+@aggregator_router.put("/downvote")
 async def downvote_post(post_id: str, user=Depends(auth_manager)):
     if get_post(post_id) is None:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -68,6 +83,21 @@ async def downvote_post(post_id: str, user=Depends(auth_manager)):
     add_to_attribute_list(user["id"], "list_of_downvotes", post_id)
 
     return {"message": "Post downvoted"}
+
+
+@aggregator_router.put("/remove-downvote")
+async def remove_downvote_post(post_id: str, user=Depends(auth_manager)):
+    if get_post(post_id) is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # Checks if user has not upvoted the post
+    if post_id not in user["list_of_downvotes"]:
+        raise HTTPException(status_code=400, detail="Post not downvoted")
+
+    change_attribute_count(post_id, "downvotes", False)
+    remove_from_attribute_list(user, "list_of_downvotes", post_id)
+
+    return {"message": "Post upvote removed"}
 
 
 @aggregator_router.post("/comment")
