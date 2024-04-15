@@ -18,13 +18,35 @@ class Token(BaseModel):
         }
 
 
-# Main class for user
+class UserVotes(BaseModel):
+    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    user_id: str
+
+    list_of_posts_upvotes: list[str] = []
+    list_of_posts_downvotes: list[str] = []
+
+    list_of_comments_upvotes: list[str] = []
+    list_of_comments_downvotes: list[str] = []
+
+    class Config:
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "user_id": "sample",
+                "list_of_posts_upvotes": ["sample"],
+                "list_of_posts_downvotes": ["sample"],
+                "list_of_comments_upvotes": ["sample"],
+                "list_of_comments_downvotes": ["sample"],
+            }
+        }
+
+
 class RegisterUser(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     email_address: EmailStr
     password: str
-    list_of_upvotes: list[str] = []
-    list_of_downvotes: list[str] = []
+    username: str
+    avatar: int
 
     @field_validator("password")
     @classmethod
@@ -45,8 +67,8 @@ class RegisterUser(BaseModel):
             "example": {
                 "email_address": "john_doe@gmail.com",
                 "password": "password",
-                # "first_name": "John",
-                # "last_name": "Doe",
+                "username": "john_doe",
+                "avatar": 1,
             }
         }
 

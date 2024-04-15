@@ -7,8 +7,8 @@ curl -X 'POST' \
 -d '{
           "email_address": "john.doe@gmail.com",
           "password": "passwordThis123",
-          "first_name": "John",
-          "last_name": "Doe"
+          "username": "john_doe",
+          "avatar": 0
 }' | jq .
 
 export TOKEN=$(curl -X 'POST' \
@@ -68,17 +68,14 @@ curl -X 'GET' \
 curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
 'http://localhost:8000/recommender/get-recommendations' | jq .
 
-curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/upvote?post_id=$POST_ID" | jq .
-
-curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/comment" \
--H 'accept: application/json' \
--H 'Content-Type: application/json' \
--d '{
+export COMMENT_ID=$(curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+    "http://localhost:8000/aggregator/comment" \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{
           "post_id": "'$POST_ID'",
           "comment": "This is a comment"
-}' | jq .
+}' | jq -r .comment_id)
 
 curl -X 'GET' \
 "http://localhost:8000/aggregator/get-comments?post_id=$POST_ID" \
@@ -86,19 +83,34 @@ curl -X 'GET' \
 -H 'Content-Type: application/json' | jq .
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/upvote?post_id=$POST_ID" | jq .
+"http://localhost:8000/aggregator/upvote-post?post_id=$POST_ID" | jq .
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/upvote?post_id=$POST_ID" | jq .
+"http://localhost:8000/aggregator/upvote-post?post_id=$POST_ID" | jq .
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/remove-upvote?post_id=$POST_ID" | jq .
+"http://localhost:8000/aggregator/remove-upvote-post?post_id=$POST_ID" | jq .
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/downvote?post_id=$POST_ID" | jq .
+"http://localhost:8000/aggregator/downvote-post?post_id=$POST_ID" | jq .
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/remove-downvote?post_id=$POST_ID" | jq .
+"http://localhost:8000/aggregator/remove-downvote-post?post_id=$POST_ID" | jq .
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
-"http://localhost:8000/aggregator/remove-downvote?post_id=$POST_ID" | jq .
+"http://localhost:8000/aggregator/remove-downvote-post?post_id=$POST_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/upvote-comment?comment_id=$COMMENT_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/upvote-comment?comment_id=$COMMENT_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/remove-upvote-comment?comment_id=$COMMENT_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/remove-downvote-comment?comment_id=$COMMENT_ID" | jq .
+
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8000/aggregator/downvote-comment?comment_id=$COMMENT_ID" | jq .

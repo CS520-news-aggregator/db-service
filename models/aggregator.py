@@ -31,6 +31,9 @@ class Comment(BaseModel):
     comment: str
     post_id: str
 
+    upvotes: int = 0
+    downvotes: int = 0
+
     class Config:
         populate_by_name = True
         json_schema_extra = {

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from models.user import RegisterUser, LoginUser, Token, Preferences
+from models.user import RegisterUser, LoginUser, Token, Preferences, UserVotes
 from fastapi_login import LoginManager
 from passlib.context import CryptContext
 from fastapi.encoders import jsonable_encoder
@@ -24,11 +24,16 @@ def query_user(email_address: str):
 @user_router.post("/register")
 async def register_user(_: Request, reg_user: RegisterUser = Body(...)):
     if user_client["users"].find_one({"email_address": reg_user.email_address}):
-        raise HTTPException(status_code=401, detail="User already exists")
+        raise HTTPException(status_code=401, detail="Email already registered")
+    elif user_client["users"].find_one({"username": reg_user.username}):
+        raise HTTPException(status_code=401, detail="Username already registered")
 
     user_data = jsonable_encoder(reg_user)
     user_data["hashed_password"] = pwd_context.hash(user_data.pop("password"))
     res_user = user_client["users"].insert_one(user_data)
+
+    user_votes = UserVotes(user_id=str(res_user.inserted_id))
+    user_client["votes"].insert_one(jsonable_encoder(user_votes))
 
     return {
         "message": "User created",
