@@ -74,7 +74,7 @@ export COMMENT_ID=$(curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
     -H 'Content-Type: application/json' \
     -d '{
           "post_id": "'$POST_ID'",
-          "comment": "This is a comment"
+          "content": "This is a comment"
 }' | jq -r .comment_id)
 
 curl -X 'GET' \

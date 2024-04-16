@@ -28,7 +28,7 @@ class Post(BaseModel):
 
 class Comment(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
-    comment: str
+    content: str
     post_id: str
 
     upvotes: int = 0
@@ -38,7 +38,7 @@ class Comment(BaseModel):
         populate_by_name = True
         json_schema_extra = {
             "example": {
-                "comment": "sample",
+                "content": "sample",
                 "post_id": "sample",
             }
         }
