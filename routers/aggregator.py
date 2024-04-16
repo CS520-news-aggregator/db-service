@@ -9,6 +9,10 @@ from routers.user import auth_manager, user_client
 aggregator_router = APIRouter(prefix="/aggregator")
 aggregator_client = get_mongo_client()["aggregator"]
 
+def change_db_id_to_str(data):
+    if data:
+        data["id"] = str(data["_id"])
+    return data
 
 @aggregator_router.post("/add-aggregation")
 async def put_aggregations(post: Post = Body(...)):
@@ -191,9 +195,11 @@ def change_attribute_count(
 
 def get_post(post_id: str):
     post = aggregator_client["posts"].find_one({"_id": post_id})
+    post = change_db_id_to_str(post)
     return post
 
 
 def get_comment(comment_id: str):
     comment = aggregator_client["comments"].find_one({"_id": comment_id})
+    comment = change_db_id_to_str(comment)
     return comment
