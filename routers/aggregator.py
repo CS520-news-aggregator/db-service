@@ -156,7 +156,7 @@ async def comment_post(comment: Comment = Body(...), user=Depends(auth_manager))
         raise HTTPException(status_code=404, detail="Post not found")
 
     comment_data = jsonable_encoder(comment)
-    comment_data["user_id"] = user["id"]
+    comment_data["author_id"] = user["id"]
 
     aggregator_client["comments"].insert_one(comment_data)
     return {"message": "Comment added", "comment_id": str(comment_data["_id"])}

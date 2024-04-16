@@ -59,6 +59,14 @@ async def view_user(user=Depends(auth_manager)):
     return {"message": "User is logged in", "user": user}
 
 
+@user_router.get("/get-user")
+async def view_user(user_id: str):
+    return {
+        "message": "User found",
+        "user": user_client["users"].find_one({"_id": user_id}),
+    }
+
+
 @user_router.get("/get-all-users")
 async def get_all_users():
     return [str(user["_id"]) for user in user_client["users"].find()]

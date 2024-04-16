@@ -20,8 +20,8 @@ export TOKEN=$(curl -X 'POST' \
           "password": "passwordThis123"
 }' | jq -r .token)
 
-curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
-'http://localhost:8000/user/view' | jq .
+export USER_ID=$(curl -X 'GET' -H "Authorization: Bearer $TOKEN" \
+'http://localhost:8000/user/view' | jq -r .user.id)
 
 curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
 'http://127.0.0.1:8000/user/add-preferences' \
@@ -114,3 +114,8 @@ curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
 
 curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
 "http://localhost:8000/aggregator/downvote-comment?comment_id=$COMMENT_ID" | jq .
+
+curl -X 'GET' \
+"http://localhost:8000/user/get-user?user_id=$USER_ID" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' | jq .
