@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException
 from fastapi.encoders import jsonable_encoder
 from utils import get_mongo_client
 from models.annotator import Annotation
@@ -8,7 +8,12 @@ annotator_client = get_mongo_client()["annotator"]
 
 
 @annotator_router.post("/add-annotation")
-def put_annotations(annotation: Annotation = Body(...)):
+def add_annotations(annotation: Annotation = Body(...)):
+    if get_topics(annotation.post_id) is not None:
+        raise HTTPException(
+            status_code=400, detail="Annotation with same post_id already exists"
+        )
+
     annotation_data = jsonable_encoder(annotation)
     res_annotation = annotator_client["topics"].insert_one(annotation_data)
     return {

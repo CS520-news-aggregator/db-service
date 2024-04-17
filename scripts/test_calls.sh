@@ -119,3 +119,12 @@ curl -X 'GET' \
 "http://localhost:8000/user/get-user?user_id=$USER_ID" \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' | jq .
+
+curl -X 'POST' \
+"http://localhost:8020/subscriber/update" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+          "post_id": "'$POST_ID'",
+          "message": "become"
+}' | jq .
