@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
 from utils import get_mongo_client
 from models.aggregator import Post, Comment
-from models.user import UserVotes
 from fastapi.encoders import jsonable_encoder
 from routers.user import auth_manager, user_client
 
@@ -18,6 +17,12 @@ def change_db_id_to_str(data):
 
 @aggregator_router.post("/add-aggregation")
 async def put_aggregations(post: Post = Body(...)):
+    # Check for duplicates with the same link
+    if aggregator_client["posts"].find_one({"link": post.link}):
+        raise HTTPException(
+            status_code=400, detail="Post with same link already exists"
+        )
+
     post_data = jsonable_encoder(post)
     res_post = aggregator_client["posts"].insert_one(post_data)
     return {"message": "Added text aggregation", "post_id": str(res_post.inserted_id)}
