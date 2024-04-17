@@ -56,7 +56,8 @@ def login(_: Request, data: LoginUser = Body(...)):
 
 @user_router.get("/view")
 async def view_user(user=Depends(auth_manager)):
-    return {"message": "User is logged in", "user": user}
+    user_votes = user_client["votes"].find_one({"user_id": user["id"]})
+    return {"message": "User is logged in", "user": user, "votes": user_votes}
 
 
 @user_router.get("/get-user")
