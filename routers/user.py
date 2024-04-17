@@ -60,6 +60,12 @@ async def view_user(user=Depends(auth_manager)):
     return {"message": "User is logged in", "user": user, "votes": user_votes}
 
 
+@user_router.get("/is-first-time")
+async def is_first_time(user=Depends(auth_manager)):
+    user_prefs = user_client["preferences"].find_one({"user_id": user["id"]})
+    return {"message": "User is logged in", "is_first_time": user_prefs is None}
+
+
 @user_router.get("/get-user")
 async def view_user(user_id: str):
     return {
