@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Body, HTTPException
 from fastapi.encoders import jsonable_encoder
 from utils import get_mongo_client
@@ -9,9 +10,9 @@ annotator_client = get_mongo_client()["annotator"]
 
 @annotator_router.post("/add-annotation")
 def add_annotations(annotation: Annotation = Body(...)):
-    if get_topics(annotation.post_id) is not None:
+    if get_topics(annotation.post_ids) is not None:
         raise HTTPException(
-            status_code=400, detail="Annotation with same post_id already exists"
+            status_code=400, detail="Annotation with same post_ids already exists"
         )
 
     annotation_data = jsonable_encoder(annotation)
@@ -23,14 +24,14 @@ def add_annotations(annotation: Annotation = Body(...)):
 
 
 @annotator_router.get("/get-annotation")
-def get_annotations(post_id: str):
-    annotations = get_topics(post_id)
+def get_annotations(post_ids: List[str]):
+    annotations = get_topics(post_ids)
     return {
         "message": "Retrieved annotations",
         "annotations": jsonable_encoder(annotations),
     }
 
 
-def get_topics(post_id: str):
-    annotations = annotator_client["topics"].find_one({"post_id": post_id})
+def get_topics(post_ids: List[str]):
+    annotations = annotator_client["topics"].find_one({"post_ids": post_ids})
     return annotations

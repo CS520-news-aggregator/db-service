@@ -5,11 +5,11 @@ from typing import List
 
 class Annotation(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
-    post_id: str
-    list_topics: List[str]
+    post_ids: List[str]
+    topics: List[str]
 
     class Config:
         populate_by_name = True
         json_schema_extra = {
-            "example": {"post_id": "sample", "list_topics": ["sample"]}
+            "example": {"post_ids": ["sample"], "topics": ["sample"]}
         }
