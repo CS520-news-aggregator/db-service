@@ -68,9 +68,13 @@ async def view_user(user=Depends(auth_manager)):
 
 @user_router.get("/get-user")
 async def view_user(user_id: str):
+    user_prefs = user_client["preferences"].find_one({"user_id": user_id})
+    user_votes = user_client["votes"].find_one({"user_id": user_id})
     return {
         "message": "User found",
         "user": user_client["users"].find_one({"_id": user_id}),
+        "votes": user_votes,
+        "preferences": user_prefs,
     }
 
 

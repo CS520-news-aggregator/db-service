@@ -1,4 +1,5 @@
 import re
+from typing import List
 import uuid
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -22,11 +23,11 @@ class UserVotes(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     user_id: str
 
-    list_of_posts_upvotes: list[str] = []
-    list_of_posts_downvotes: list[str] = []
+    list_of_posts_upvotes: List[str] = []
+    list_of_posts_downvotes: List[str] = []
 
-    list_of_comments_upvotes: list[str] = []
-    list_of_comments_downvotes: list[str] = []
+    list_of_comments_upvotes: List[str] = []
+    list_of_comments_downvotes: List[str] = []
 
     class Config:
         populate_by_name = True
@@ -88,7 +89,8 @@ class LoginUser(BaseModel):
 
 
 class Preferences(BaseModel):
-    preferences: list[str]
+    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    preferences: List[str]
 
     class Config:
         populate_by_name = True

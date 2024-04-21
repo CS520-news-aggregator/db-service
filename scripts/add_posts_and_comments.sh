@@ -16,7 +16,7 @@ export TOKEN=$(curl -X 'POST' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -d '{
-          "email_address": "lifewhiz@gmail.com",
+          "email_address": "lifewhiz101@gmail.com",
           "password": "lifewhiz101"
 }' | jq -r .token)
 
