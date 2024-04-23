@@ -27,6 +27,8 @@ async def register_user(_: Request, reg_user: RegisterUser = Body(...)):
         raise HTTPException(status_code=401, detail="Email already registered")
     elif user_client["users"].find_one({"username": reg_user.username}):
         raise HTTPException(status_code=401, detail="Username already registered")
+    elif reg_user.username == "":
+        raise HTTPException(status_code=401, detail="Username cannot be empty")
 
     user_data = jsonable_encoder(reg_user)
     user_data["hashed_password"] = pwd_context.hash(user_data.pop("password"))
