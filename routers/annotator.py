@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from utils import get_mongo_client
-from models.annotator import Post, Comment
+from models.post import Post, Comment
 from routers.user import auth_manager, user_client
 
 annotator_router = APIRouter(prefix="/annotator")

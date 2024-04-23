@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, HTTPException
 from utils import get_mongo_client
-from models.aggregator import Source
+from models.source import Source
 from fastapi.encoders import jsonable_encoder
 
 
