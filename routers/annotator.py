@@ -32,7 +32,7 @@ def get_one_post(source_ids: List[str]):
 async def get_all_posts(limit: int):
     return {
         "message": "Retrieved posts",
-        "list_posts": list(annotator_client["posts"].find().limit(limit)),
+        "list_posts": get_all_posts(limit),
     }
 
 
@@ -215,4 +215,9 @@ def get_comments_by_post_id(post_id: str):
 
 def get_post(post_id: str):
     post = annotator_client["posts"].find_one({"_id": post_id})
-    return post
+    return change_db_id_to_str(post)
+
+
+def get_all_posts(limit: int):
+    list_posts = list(annotator_client["posts"].find().limit(limit))
+    return list(map(change_db_id_to_str, list_posts))
