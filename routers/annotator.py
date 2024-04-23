@@ -32,6 +32,14 @@ def get_annotations(post_ids: List[str]):
     }
 
 
+@annotator_router.get("/get-all-annotations")
+async def get_all_annotations(limit: int):
+    return {
+        "message": "Retrieved annotations",
+        "list_annotations": list(annotator_client["topics"].find().limit(limit)),
+    }
+
+
 def get_topics(post_ids: List[str]):
     annotations = annotator_client["topics"].find_one({"post_ids": post_ids})
     return annotations
