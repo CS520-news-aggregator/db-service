@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from utils import get_mongo_client
+from utils import get_mongo_client, change_db_id_to_str
 from models.post import Post, Comment
 from routers.user import auth_manager, user_client
 
@@ -20,8 +20,8 @@ def add_post(post: Post = Body(...)):
 
 
 @annotator_router.get("/get-post")
-def get_one_post(source_ids: List[str]):
-    post = get_post(source_ids)
+def get_one_post(post_id: str):
+    post = get_post(post_id)
     return {
         "message": "Retrieved post",
         "post": jsonable_encoder(post),
@@ -173,12 +173,6 @@ async def get_comments(post_id: str):
         "message": "Retrieved comments",
         "comments": get_comments_by_post_id(post_id),
     }
-
-
-def change_db_id_to_str(data):
-    if data:
-        data["id"] = str(data["_id"])
-    return data
 
 
 def remove_from_attribute_list(dt_vals: dict, attribute: str, post_id: str):

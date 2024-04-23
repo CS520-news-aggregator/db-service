@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, HTTPException
-from utils import get_mongo_client
+from utils import get_mongo_client, change_db_id_to_str
 from models.source import Source
 from fastapi.encoders import jsonable_encoder
 
@@ -39,8 +39,10 @@ async def get_all_aggregations(limit: int):
 
 
 def get_source(post_id: str):
-    return aggregator_client["sources"].find_one({"_id": post_id})
+    source = aggregator_client["sources"].find_one({"_id": post_id})
+    return change_db_id_to_str(source)
 
 
 def get_all_sources(limit: int):
-    return list(aggregator_client["sources"].find().limit(limit))
+    list_sources = aggregator_client["sources"].find().limit(limit)
+    return list(map(change_db_id_to_str, list_sources))
