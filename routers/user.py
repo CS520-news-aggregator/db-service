@@ -17,6 +17,10 @@ user_client = get_mongo_client()["user"]
 @auth_manager.user_loader()
 def query_user(email_address: str):
     user = user_client["users"].find_one({"email_address": email_address})
+
+    if user is None:
+        return None
+
     user["id"] = str(user.pop("_id"))
     return user
 
