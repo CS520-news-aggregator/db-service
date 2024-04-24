@@ -175,6 +175,14 @@ async def get_comments(post_id: str):
     }
 
 
+@annotator_router.get("/get-comment")
+async def get_comment(comment_id: str):
+    return {
+        "message": "Retrieved comment",
+        "comment": get_comment_by_id(comment_id),
+    }
+
+
 def remove_from_attribute_list(dt_vals: dict, attribute: str, post_id: str):
     dt_vals[attribute].remove(post_id)
     user_client["votes"].update_one(
@@ -205,6 +213,11 @@ def get_comment(comment_id: str):
 def get_comments_by_post_id(post_id: str):
     comments = list(annotator_client["comments"].find({"post_id": post_id}))
     return list(map(change_db_id_to_str, comments))
+
+
+def get_comment_by_id(comment_id: str):
+    comment = annotator_client["comments"].find_one({"_id": comment_id})
+    return change_db_id_to_str(comment)
 
 
 def get_post(post_id: str):
