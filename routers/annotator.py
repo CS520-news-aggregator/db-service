@@ -1,4 +1,3 @@
-from typing import List
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from utils import get_mongo_client, change_db_id_to_str
@@ -220,11 +219,26 @@ def get_comment_by_id(comment_id: str):
     return change_db_id_to_str(comment)
 
 
+def add_fields_to_post(post: dict):
+    if post_summary := get_llm_result_by_post_id("summaries", post["_id"]):
+        post["summary"] = post_summary["summary"]
+    if post_title := get_llm_result_by_post_id("titles", post["_id"]):
+        post["title"] = post_title["title"]
+    return post
+
+
+def get_llm_result_by_post_id(result_collection: str, post_id: str):
+    llm_client = get_mongo_client()["llm"]
+    return llm_client[result_collection].find_one({"post_id": post_id})
+
+
 def get_post(post_id: str):
     post = annotator_client["posts"].find_one({"_id": post_id})
-    return change_db_id_to_str(post)
+    return change_db_id_to_str(add_fields_to_post(post))
 
 
 def get_all_posts(limit: int):
-    list_posts = list(annotator_client["posts"].find().limit(limit))
+    list_posts = list(
+        map(add_fields_to_post, annotator_client["posts"].find().limit(limit))
+    )
     return list(map(change_db_id_to_str, list_posts))

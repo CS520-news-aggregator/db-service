@@ -5,6 +5,7 @@ from routers.user import user_router
 from routers.annotator import annotator_router
 from routers.aggregator import aggregator_router
 from routers.recommender import recommender_router
+from routers.llm import llm_router
 from utils import get_mongo_client
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,6 +27,7 @@ app.include_router(user_router)
 app.include_router(annotator_router)
 app.include_router(aggregator_router)
 app.include_router(recommender_router)
+app.include_router(llm_router)
 
 
 @app.get("/")

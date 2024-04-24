@@ -72,30 +72,63 @@ curl -X 'POST' \
 }' | jq .
 
 curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
-    "http://localhost:8000/aggregator/comment" \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -d '{
+"http://localhost:8000/aggregator/comment" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
           "post_id": "'$POST_ID'",
           "content": "This is a comment"
 }' | jq -r .comment_id
 
 
 curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
-    "http://localhost:8000/aggregator/comment" \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -d '{
+"http://localhost:8000/aggregator/comment" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
           "post_id": "'$POST_ID'",
           "content": "This is a comment 2"
 }' | jq -r .comment_id
 
 
 curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
-    "http://localhost:8000/aggregator/comment" \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -d '{
+"http://localhost:8000/aggregator/comment" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
           "post_id": "'$POST_ID_2'",
           "content": "This is a comment 3"
 }' | jq -r .comment_id
+
+curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8020/llm/generate-summary" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+          "post_id": "3b32cf7f-d816-4ebd-b714-e9b76aecdb51",
+          "text": "In general, a sample is a limited quantity of something which is intended to be similar to and represent a larger amount of that thing(s)."
+}' | jq .
+
+
+curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8020/llm/generate-title" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+          "post_id": "3b32cf7f-d816-4ebd-b714-e9b76aecdb51",
+          "text": "In general, a sample is a limited quantity of something which is intended to be similar to and represent a larger amount of that thing(s)."
+}' | jq .
+
+curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
+"http://localhost:8020/llm/prompt" \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+          "prompt": "Hello, what is your name?"
+}' | jq .
+
+curl http://localhost:11434/api/generate -d '{     "model": "orca-mini",
+  "prompt": "Generate a social media post title using only 5 words and at most 1 sentence for the following text and only return the title: In general, a sample is a limited quantity of something which is intended to be similar to and represent a larger amount of that thing(s).",
+  "raw": true,
+  "stream": false
+}'

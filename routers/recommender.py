@@ -16,7 +16,7 @@ def get_recommendations(user=Depends(auth_manager), limit: int = 10):
         response = requests.get(
             recommender_url,
             params={"user_id": user["id"], "limit": limit},
-            timeout=5,
+            timeout=30,
         )
     except requests.exceptions.RequestException:
         return {"message": "Could not send data to recommender service due to timeout"}
