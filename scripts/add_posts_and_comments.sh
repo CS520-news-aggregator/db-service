@@ -127,8 +127,12 @@ curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
           "prompt": "Hello, what is your name?"
 }' | jq .
 
-curl http://localhost:11434/api/generate -d '{     "model": "orca-mini",
-  "prompt": "Generate a social media post title using only 5 words and at most 1 sentence for the following text and only return the title: In general, a sample is a limited quantity of something which is intended to be similar to and represent a larger amount of that thing(s).",
+curl http://ollama:11434/api/generate -d '{     "model": "gemma",
+  "prompt": "Generate a social media post title using only 5 words and at most 1 sentence for the following text and only return the title: Ukraine has begun using long-range ballistic missiles secretly provided by the US against invading Russian forces, American officials have confirmed ",
   "raw": true,
   "stream": false
+}'
+
+curl http://localhost:11434/api/pull -d '{
+  "name": "gemma"
 }'
