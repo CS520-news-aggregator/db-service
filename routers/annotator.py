@@ -2,6 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from utils import get_mongo_client, change_db_id_to_str
 from models.post import Post, Comment
+from models.llm import PostAnalysis
 from routers.user import auth_manager, user_client
 
 annotator_router = APIRouter(prefix="/annotator")
@@ -220,10 +221,12 @@ def get_comment_by_id(comment_id: str):
 
 
 def add_fields_to_post(post: dict):
-    if post_summary := get_llm_result_by_post_id("summaries", post["_id"]):
-        post["summary"] = post_summary["summary"]
-    if post_title := get_llm_result_by_post_id("titles", post["_id"]):
-        post["title"] = post_title["title"]
+    if post_analysis_json := get_llm_result_by_post_id("analyses", post["_id"]):
+        post_analysis = PostAnalysis(**post_analysis_json)
+
+        post["summary"] = post_analysis.completion.summary
+        post["title"] = post_analysis.completion.title
+
     return post
 
 
