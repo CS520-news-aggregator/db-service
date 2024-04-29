@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, HTTPException
 from fastapi.encoders import jsonable_encoder
-from models.recommendation import Recommendation
+from models.recommendation import PostRecommendation
 from utils import get_mongo_client
 
 recommendation_router = APIRouter(prefix="/recommendation")
@@ -8,7 +8,14 @@ recommendation_client = get_mongo_client()["recommendation"]
 
 
 @recommendation_router.post("/add-recommendation")
-async def add_recommendation(recommendation: Recommendation = Body(...)):
+async def add_recommendation(recommendation: PostRecommendation = Body(...)):
+    if recommendation_client["recommendations"].find_one(
+        {"post_id": recommendation.post_id}
+    ):
+        raise HTTPException(
+            status_code=400, detail="Recommendation already exists for this post"
+        )
+
     recommendation_dict = jsonable_encoder(recommendation)
 
     added_recommendation = recommendation_client["recommendations"].insert_one(
@@ -22,11 +29,12 @@ async def add_recommendation(recommendation: Recommendation = Body(...)):
 
 
 @recommendation_router.get("/get-recommendations")
-async def get_recommendations(user_id: str):
+async def get_recommendations(limit: int):
     if (
-        recommendations := recommendation_client["recommendations"].find(
-            {"user_id": user_id}
-        )
+        recommendations := recommendation_client["recommendations"]
+        .find()
+        .sort({"_id": -1})
+        .limit(limit)
     ) is not None:
         return {
             "recommendations": list(recommendations),

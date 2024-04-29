@@ -21,7 +21,9 @@ def add_post(post: Post = Body(...)):
 
 @annotator_router.get("/get-post")
 def get_one_post(post_id: str):
-    post = get_post(post_id)
+    if (post := get_post(post_id)) is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
     return {
         "message": "Retrieved post",
         "post": jsonable_encoder(post),
@@ -236,8 +238,9 @@ def get_llm_result_by_post_id(result_collection: str, post_id: str):
 
 
 def get_post(post_id: str):
-    post = annotator_client["posts"].find_one({"_id": post_id})
-    return change_db_id_to_str(add_fields_to_post(post))
+    if post := annotator_client["posts"].find_one({"_id": post_id}):
+        return change_db_id_to_str(add_fields_to_post(post))
+    return None
 
 
 def get_all_posts(limit: int):
