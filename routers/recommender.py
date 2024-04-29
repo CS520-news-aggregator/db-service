@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
+from models.utils.constants import RECOMMENDER_HOST
 from routers.user import auth_manager
-import requests
-import os
+from models.utils.funcs import Response, get_data_from_api
 
 
 recommender_router = APIRouter(prefix="/recommender")
@@ -9,21 +9,13 @@ recommender_router = APIRouter(prefix="/recommender")
 
 @recommender_router.get("/get-recommendations")
 def get_recommendations(user=Depends(auth_manager), limit: int = 10):
-    RECOMMENDER_HOST = os.getenv("RECOMMENDER_HOST", "localhost")
-    recommender_url = f"http://{RECOMMENDER_HOST}:8030/recommender/get-recommendations"
-
-    try:
-        response = requests.get(
-            recommender_url,
-            params={"user_id": user["id"], "limit": limit},
-            timeout=30,
+    if (
+        recommendations := get_data_from_api(
+            RECOMMENDER_HOST,
+            "recommender/get-recommendations",
+            {"user_id": user["id"], "limit": limit},
         )
-    except requests.exceptions.RequestException:
-        return {"message": "Could not send data to recommender service due to timeout"}
+    ) == Response.FAILURE:
+        raise HTTPException(status_code=400, detail="Could not get recommendations")
 
-    if response.status_code != 200:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {response.text}"
-        )
-
-    return response.json()
+    return recommendations
