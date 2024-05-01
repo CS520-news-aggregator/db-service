@@ -35,7 +35,7 @@ async def get_posts(limit: int = 5, query: str = "", page: int = 1):
     if not query:
         return {
             "message": "Retrieved posts",
-            "list_posts": get_all_posts(limit),
+            "list_posts": get_all_posts(limit, page - 1),
         }
     else:
         return {
@@ -249,9 +249,11 @@ def get_post(post_id: str):
     return None
 
 
-def get_all_posts(limit: int):
+def get_all_posts(limit: int, skip: int):
     list_posts = list(
-        map(add_fields_to_post, annotator_client["posts"].find().limit(limit))
+        map(
+            add_fields_to_post, annotator_client["posts"].find().skip(skip).limit(limit)
+        )
     )
     return list(map(change_db_id_to_str, list_posts))
 
