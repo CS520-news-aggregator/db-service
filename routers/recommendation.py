@@ -34,7 +34,7 @@ async def get_recommendations(limit: int, page: int):
         recommendations := recommendation_client["recommendations"]
         .find()
         .sort({"_id": -1})
-        .skip(page)
+        .skip(page - 1)
         .limit(limit)
     ) is not None:
         return {
