@@ -37,12 +37,13 @@ async def root():
     return {"Hello": "World"}
 
 
-@app.get("/clean_db")
+@app.get("/clean-db")
 async def clean_db():
     client = get_mongo_client()
     client.drop_database("user")
     client.drop_database("annotator")
-    client.drop_database("aggregator")
+    client.drop_database("llm")
+    client.drop_database("recommendation")
     return {"message": "Databases cleaned"}
 
 
