@@ -31,7 +31,7 @@ def get_one_post(post_id: str):
 
 
 @annotator_router.get("/get-all-posts")
-async def get_posts(limit: int = 5, query: str = ""):
+async def get_posts(limit: int = 5, query: str = "", page: int = 1):
     if not query:
         return {
             "message": "Retrieved posts",
@@ -40,7 +40,7 @@ async def get_posts(limit: int = 5, query: str = ""):
     else:
         return {
             "message": "Retrieved posts by query",
-            "list_posts": get_posts_by_query(query, limit),
+            "list_posts": get_posts_by_query(query, limit, page - 1),
         }
 
 
@@ -256,7 +256,7 @@ def get_all_posts(limit: int):
     return list(map(change_db_id_to_str, list_posts))
 
 
-def get_posts_by_query(query: str, limit: int):
+def get_posts_by_query(query: str, limit: int, skip: int):
     llm_analyses = get_mongo_client()["llm"]["analyses"]
     llm_agg = llm_analyses.aggregate(
         [
@@ -266,6 +266,7 @@ def get_posts_by_query(query: str, limit: int):
                     "text": {"query": query, "path": {"wildcard": "*"}},
                 }
             },
+            {"$skip": skip},
             {"$limit": limit},
             {"$project": {"_id": 0, "post_id": 1}},
         ]
