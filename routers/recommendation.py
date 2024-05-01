@@ -29,12 +29,13 @@ async def add_recommendation(recommendation: PostRecommendation = Body(...)):
 
 
 @recommendation_router.get("/get-recommendations")
-async def get_recommendations(limit: int):
+async def get_recommendations(limit: int, page: int):
     if (
         recommendations := recommendation_client["recommendations"]
         .find()
         .sort({"_id": -1})
         .limit(limit)
+        .skip((page - 1) * limit)
     ) is not None:
         return {
             "recommendations": list(recommendations),

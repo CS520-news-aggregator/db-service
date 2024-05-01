@@ -9,12 +9,12 @@ recommender_router = APIRouter(prefix="/recommender")
 
 
 @recommender_router.get("/get-recommendations")
-def get_recommendations(user=Depends(auth_manager), limit: int = 5):
+def get_recommendations(page: int, limit: int = 5, user=Depends(auth_manager)):
     if (
         recommendations := get_data_from_api(
             RECOMMENDER_HOST,
             "recommender/get-recommendations",
-            {"user_id": user["id"], "limit": limit},
+            {"user_id": user["id"], "limit": limit, "page": page},
         )
     ) == Response.FAILURE:
         raise HTTPException(status_code=400, detail="Could not get recommendations")
