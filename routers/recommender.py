@@ -8,7 +8,7 @@ recommender_router = APIRouter(prefix="/recommender")
 
 
 @recommender_router.get("/get-recommendations")
-def get_recommendations(user=Depends(auth_manager), limit: int = 10):
+def get_recommendations(user=Depends(auth_manager), limit: int = 5):
     if (
         recommendations := get_data_from_api(
             RECOMMENDER_HOST,
