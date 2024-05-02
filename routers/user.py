@@ -1,5 +1,12 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from models.user import RegisterUser, LoginUser, Token, Preferences, UserVotes
+from models.user import (
+    RegisterUser,
+    LoginUser,
+    Token,
+    Preferences,
+    UserVotes,
+    UpdateUser,
+)
 from fastapi_login import LoginManager
 from passlib.context import CryptContext
 from fastapi.encoders import jsonable_encoder
@@ -41,6 +48,37 @@ async def register_user(_: Request, reg_user: RegisterUser = Body(...)):
         "message": "User created",
         "token": create_token(user_data, str(res_user.inserted_id)),
     }
+
+
+@user_router.put("/update-user")
+async def update_user(user=Depends(auth_manager), user_data: UpdateUser = Body(...)):
+    user_data_dt = user_data.model_dump(exclude_none=True)
+
+    if user_data_dt.get("password"):
+        user_data_dt["hashed_password"] = pwd_context.hash(user_data_dt.pop("password"))
+
+    if user_data_dt.get("username") and (
+        user_ret := user_client["users"].find_one(
+            {"username": user_data_dt["username"]}
+        )
+    ):
+        if user_ret["_id"] != user["id"]:
+            raise HTTPException(status_code=401, detail="Username already registered")
+
+    if user_data_dt.get("username") == "":
+        raise HTTPException(status_code=401, detail="Username cannot be empty")
+
+    if user_data_dt.get("email_address") and (
+        user_ret := user_client["users"].find_one(
+            {"email_address": user_data_dt["email_address"]}
+        )
+    ):
+        if user_ret["_id"] != user["id"]:
+            raise HTTPException(status_code=401, detail="Email already registered")
+
+    user_client["users"].update_one({"_id": user["id"]}, {"$set": user_data_dt})
+
+    return {"message": "User updated"}
 
 
 @user_router.post("/login")

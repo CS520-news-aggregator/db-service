@@ -20,6 +20,17 @@ export TOKEN=$(curl -X 'POST' \
           "password": "lifewhiz101"
 }' | jq -r .token)
 
+curl -X 'PUT' -H "Authorization: Bearer $TOKEN" \
+'http://127.0.0.1:8000/user/update-user' \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+          "email_address": "lifewhiz@gmail.com",
+          "username": "lifewhiz",
+          "avatar": 2,
+          "password": "lifewhiz101"
+}' | jq .
+
 curl -X 'POST' -H "Authorization: Bearer $TOKEN" \
 'http://127.0.0.1:8000/user/add-preferences' \
 -H 'accept: application/json' \
