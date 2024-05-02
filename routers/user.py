@@ -22,8 +22,8 @@ user_client = get_mongo_client()["user"]
 
 
 @auth_manager.user_loader()
-def query_user(email_address: str):
-    if user := user_client["users"].find_one({"email_address": email_address}):
+def query_user(user_id: str):
+    if user := user_client["users"].find_one({"_id": user_id}):
         user["id"] = str(user.pop("_id"))
     return user
 
@@ -128,7 +128,7 @@ def create_token(user, user_id: str):
         user_client["tokens"].delete_one({"_id": token["_id"]})
 
     access_token = auth_manager.create_access_token(
-        data={"sub": user["email_address"]}, expires=timedelta(days=14)
+        data={"sub": user_id}, expires=timedelta(days=14)
     )
 
     token = Token(user_id=user_id, token=access_token)
