@@ -1,7 +1,4 @@
-from contextlib import asynccontextmanager
-
 from dotenv import dotenv_values
-from fastapi import FastAPI
 from pymongo import MongoClient
 
 config = dotenv_values(".env")
