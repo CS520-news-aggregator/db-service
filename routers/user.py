@@ -46,7 +46,7 @@ async def register_user(_: Request, reg_user: RegisterUser = Body(...)):
 
     return {
         "message": "User created",
-        "token": create_token(user_data, str(res_user.inserted_id)),
+        "token": create_token(str(res_user.inserted_id)),
     }
 
 
@@ -91,7 +91,7 @@ def login(_: Request, data: LoginUser = Body(...)):
     if not pwd_context.verify(data.password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Incorrect password")
 
-    return {"message": "Logged in", "token": create_token(user, str(user["_id"]))}
+    return {"message": "Logged in", "token": create_token(str(user["_id"]))}
 
 
 @user_router.get("/view")
@@ -123,7 +123,7 @@ async def get_all_users():
     return [str(user["_id"]) for user in user_client["users"].find()]
 
 
-def create_token(user, user_id: str):
+def create_token(user_id: str):
     for token in user_client["tokens"].find({"user_id": user_id}):
         user_client["tokens"].delete_one({"_id": token["_id"]})
 
