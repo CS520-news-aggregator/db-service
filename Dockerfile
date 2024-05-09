@@ -12,6 +12,9 @@ RUN apt-get install libpq-dev python3-dev wget -y
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
+COPY requirements_test.txt .
+RUN pip3 install -r requirements_test.txt
+
 COPY . .
 EXPOSE 8000
 
