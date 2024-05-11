@@ -20,14 +20,3 @@ def test_add_analysis_no_post():
     response = client.post("/llm/add-analysis", json=jsonable_encoder(post_analysis))
     assert response.status_code == 400
 
-
-# def test_get_sub():
-#     response = client.get("/observer/subscribers")
-#     assert response.status_code == 200
-#     assert "subscribers" in response.json() and type(response.json()["subscribers"]) is list
-
-
-# def test_update_sub_fail(capsys):
-#     update_subscribers(["random"])
-#     captured = capsys.readouterr()
-#     assert "Could not send update to" in captured.out
