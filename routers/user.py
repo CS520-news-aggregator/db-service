@@ -155,5 +155,5 @@ def get_preferences(user_id: str):
     prefs = user_client["preferences"].find_one({"user_id": user_id})
     return {
         "message": "This the list of user preferences",
-        "preferences": jsonable_encoder(prefs["preferences"]),
+        "preferences": jsonable_encoder(prefs["preferences"]) if prefs else None,
     }
