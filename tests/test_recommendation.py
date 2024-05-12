@@ -2,8 +2,32 @@ from fastapi.testclient import TestClient
 from fastapi.encoders import jsonable_encoder
 from models.pub_sub import Subscriber
 from main import app
+from utils import get_mongo_client
+from models.recommendation import PostRecommendation
+import mock
 
 client = TestClient(app)
+
+
+@mock.patch("routers.recommendation.recommendation_client", get_mongo_client()["recommendation_test"])
+def test_add_recommendation():
+    post_recommendation = PostRecommendation(
+        post_id="random",
+        topics=["random"],
+        date="random",
+    )
+    #Check for failure in getting the recommendation
+    response = client.get("/recommendation/get-recommendation?limit=10&page=1")
+    assert response.status_code == 404
+    response = client.post("/recommendation/add-recommendation", json=jsonable_encoder(post_recommendation))
+    assert response.status_code == 200
+    response = client.post("/recommendation/add-recommendation", json=jsonable_encoder(post_recommendation))
+    assert response.status_code == 400
+
+    response = client.get("/recommendation/get-recommendations?limit=10&page=1")
+    assert response.status_code == 200
+
+
 
 
 # TODO change tests
