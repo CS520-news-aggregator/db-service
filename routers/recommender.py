@@ -10,7 +10,9 @@ recommender_router = APIRouter(prefix="/recommender")
 
 
 @recommender_router.get("/get-recommendations")
-def get_recommendations(page: int, limit: int = 5, query: str = "", user=Depends(auth_manager)):
+def get_recommendations(
+    page: int, limit: int = 5, query: str = "", user=Depends(auth_manager)
+):
     if not query:
         if (
             recommendations := get_data_from_api(
@@ -25,7 +27,6 @@ def get_recommendations(page: int, limit: int = 5, query: str = "", user=Depends
             "list_recommendations": get_posts_by_query(query, limit, page - 1),
             "message": "Retrieved posts by query",
         }
-        
 
     recommendations["list_recommendations"] = list(
         map(change_db_id_to_str, recommendations["list_recommendations"])
